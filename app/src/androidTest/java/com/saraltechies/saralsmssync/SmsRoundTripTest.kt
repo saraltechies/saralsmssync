@@ -50,8 +50,10 @@ class SmsRoundTripTest {
         Log.i(TAG, "PLAIN_SMS_SECONDS=" + (plain.arrivedAt - plain.message.smsTime) / 1000)
 
         // What the relay holds must be unreadable.
-        val held = URL("https://ntfy.sh/${SyncCrypto.topic(key)}/json?poll=1&since=all").readText()
-        assertTrue("The relay should hold the encrypted message", held.contains("\"message\""))
+        val relayUrl = URL("https://ntfy.sh/${SyncCrypto.topic(key)}/json?poll=1&since=all")
+        val held = waitFor(30_000) { relayUrl.readText().takeIf { it.contains("\"message\"") } }
+        assertNotNull("The relay should hold the encrypted message so offline phones can catch up", held)
+        Log.i(TAG, "RELAY_HOLDS_BYTES=" + held!!.length)
         assertFalse("The relay must not see the code", held.contains(PLAIN_CODE))
         assertFalse("The relay must not see the sender", held.contains("5551234"))
         Log.i(TAG, "RELAY_SEES_ONLY_ENCRYPTED_TEXT")
