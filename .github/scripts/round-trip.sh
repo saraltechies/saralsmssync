@@ -5,7 +5,17 @@ out=check-output
 mkdir -p "$out"
 pkg=com.saraltechies.saralsmssync.debug
 
-./gradlew installDebug installDebugAndroidTest --stacktrace || exit 1
+# A new emulator can report that it has booted before its package service is ready.
+for _ in $(seq 1 60); do
+  adb shell pm path android 2>/dev/null | grep -q package: && break
+  sleep 5
+done
+installed=0
+for _ in 1 2 3; do
+  if ./gradlew installDebug installDebugAndroidTest --stacktrace; then installed=1; break; fi
+  sleep 30
+done
+[ "$installed" = 1 ] || exit 1
 
 adb shell pm grant "$pkg" android.permission.RECEIVE_SMS
 adb shell pm grant "$pkg" android.permission.POST_NOTIFICATIONS 2>/dev/null
@@ -25,8 +35,12 @@ done
 if [ "$ready" = 1 ]; then
   adb emu sms send 5551234 "Your verification code is 482913. Do not share it."
   sleep 3
-  # The same shape as an automatic login SMS, ending in an 11-character app hash.
-  adb emu sms send 5551234 "<#> Your code is 771204 FA+9qCX9VSu"
+  # An automatic login SMS ends in the 11-character hash of the app it's meant for.
+  hash=$(adb logcat -d -s SaralRoundTrip:I | sed -n 's/.*HASH=//p' | tail -1 | tr -d '')
+  echo "Retriever hash: $hash"
+  adb emu sms send 5551234 "<#> Your code is 771204 $hash"
+  sleep 3
+  adb emu sms send 5551234 "Your code is 650388. @example.com #650388"
 else
   echo "The test never became ready" >> "$out/instrument.txt"
 fi

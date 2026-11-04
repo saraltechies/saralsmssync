@@ -1,6 +1,8 @@
 package com.saraltechies.saralsmssync
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.util.Base64
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -15,12 +17,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.net.URL
+import java.security.MessageDigest
 
 /**
  * The whole path on one emulator, through the real relay: a real incoming SMS is noticed, encrypted, sent,
  * received back and shown. .github/scripts/round-trip.sh runs this and delivers the SMS when the phone says
- * it's ready. The second SMS looks like an app's automatic login code, which recent Android versions may
- * hold back from apps for hours, so its timing is measured and reported rather than required.
+ * it's ready. The other two SMS use the automatic login formats, which recent Android versions may hold back
+ * from apps for hours, so their timing is measured and reported rather than required.
  */
 @RunWith(AndroidJUnit4::class)
 class SmsRoundTripTest {
@@ -41,6 +44,8 @@ class SmsRoundTripTest {
         instrumentation.startActivitySync(open)
         SyncService.update(context)
         Thread.sleep(5_000)
+        // A real retriever hash, belonging to another installed app, so this app isn't the intended reader.
+        Log.i(TAG, "HASH=" + retrieverHash(instrumentation.context.packageName))
         Log.i(TAG, "READY")
 
         val plain = waitFor(180_000) { db.newest().firstOrNull { it.message.body.contains(PLAIN_CODE) } }
@@ -58,16 +63,31 @@ class SmsRoundTripTest {
         assertFalse("The relay must not see the sender", held.contains("5551234"))
         Log.i(TAG, "RELAY_SEES_ONLY_ENCRYPTED_TEXT")
 
-        val hash = waitFor(180_000) { db.newest().firstOrNull { it.message.body.contains(HASH_CODE) } }
-        Log.i(
-            TAG,
-            if (hash == null) "HASH_SMS_NOT_SEEN_WITHIN_180S"
-            else "HASH_SMS_SECONDS=" + (hash.arrivedAt - hash.message.smsTime) / 1000,
-        )
+        report("RETRIEVER_SMS", HASH_CODE)
+        report("WEBOTP_SMS", WEBOTP_CODE)
 
         prefs.leaveGroup()
         SyncService.update(context)
         db.clearAll()
+    }
+
+    /** Reports how long a code took, as these may legitimately be held back for hours. */
+    private fun report(label: String, code: String) {
+        val db = InboxDb.get(context)
+        val found = waitFor(180_000) { db.newest().firstOrNull { it.message.body.contains(code) } }
+        Log.i(
+            TAG,
+            if (found == null) label + "_NOT_SEEN_WITHIN_180S"
+            else label + "_SECONDS=" + (found.arrivedAt - found.message.smsTime) / 1000,
+        )
+    }
+
+    @Suppress("DEPRECATION")
+    private fun retrieverHash(packageName: String): String {
+        val info = context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+        val text = packageName + " " + info.signatures!![0].toCharsString()
+        val digest = MessageDigest.getInstance("SHA-256").digest(text.toByteArray())
+        return Base64.encodeToString(digest.copyOf(9), Base64.NO_PADDING or Base64.NO_WRAP).substring(0, 11)
     }
 
     private fun <T : Any> waitFor(millis: Long, check: () -> T?): T? {
@@ -83,5 +103,6 @@ class SmsRoundTripTest {
         const val TAG = "SaralRoundTrip"
         const val PLAIN_CODE = "482913"
         const val HASH_CODE = "771204"
+        const val WEBOTP_CODE = "650388"
     }
 }
