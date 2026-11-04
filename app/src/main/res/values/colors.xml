@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Saral Techies brand palette (saraltechies.com) -->
+    <color name="brand_blue">#0D6EFD</color>
+    <color name="brand_navy">#0D1B4A</color>
+    <color name="ic_launcher_background">#0D6EFD</color>
+</resources>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Saral SMS Sync</string>
+
+    <string name="setup_intro">See the SMS and OTPs from all your phones in one place. Messages are encrypted on the phone that receives them, and only your own phones can read them.</string>
+    <string name="setup_first_phone">Your first phone</string>
+    <string name="setup_create">Start a new group</string>
+    <string name="setup_other_phone">Already set up on another phone?</string>
+    <string name="setup_other_phone_help">On that phone, tap the QR icon at the top, then scan the code from here.</string>
+    <string name="setup_scan">Scan QR code</string>
+    <string name="setup_paste_label">Or paste the pairing code</string>
+    <string name="setup_join">Join group</string>
+    <string name="setup_bad_code">That isn\'t a Saral SMS Sync pairing code.</string>
+    <string name="setup_scan_failed">The scanner couldn\'t start. Copy the pairing code on the other phone and paste it here instead.</string>
+
+    <string name="forward_title">Send this phone\'s SMS</string>
+    <string name="forward_off">Off. SMS on this phone stay on this phone.</string>
+    <string name="forward_on">On. New SMS go to your other phones.</string>
+    <string name="forward_last_sent">On. Last sent %1$s.</string>
+    <string name="forward_no_permission">Paused: this needs SMS access and notifications.</string>
+    <string name="read_title">Show SMS from my phones</string>
+    <string name="read_off">Off. Messages wait a few hours for you to turn this on.</string>
+    <string name="read_connected">On and connected.</string>
+    <string name="read_connecting">On. Connecting…</string>
+
+    <string name="sms_blocked">Forwarding needs SMS access and notifications, so it always shows on this phone. Open app settings and allow both. If SMS is greyed out, use the ⋮ menu there and tap \"Allow restricted settings\" first.</string>
+    <string name="open_app_settings">Open app settings</string>
+    <string name="battery_help">To be sure a code arrives while this phone is idle, let this app run without battery restrictions.</string>
+    <string name="battery_open">Battery settings</string>
+
+    <string name="no_messages">No messages yet. Use \"Send a test message\" in the ⋮ menu to check your phones are connected.</string>
+    <string name="sim_label">SIM %1$d</string>
+    <string name="shortened">This SMS was too long to send in full. The rest is on the original phone.</string>
+    <string name="arrived_late">Reached this phone %1$s after the SMS arrived.</string>
+    <string name="copy_code">Copy %1$s</string>
+
+    <string name="consent_title">Send this phone\'s SMS?</string>
+    <string name="consent_body">Every SMS this phone receives from now on, including bank messages and OTPs, will be encrypted here and sent over the internet to the phones in your group. A public relay passes it on but can\'t read it. Anyone holding one of those phones can read it.\n\nOnly turn this on for your own phone. A notification stays on this phone for as long as it\'s on.</string>
+    <string name="consent_agree">Turn on</string>
+
+    <string name="add_phone">Add a phone</string>
+    <string name="add_phone_help">On the other phone, open Saral SMS Sync and scan this code.</string>
+    <string name="add_phone_warning">Anyone who gets this code can read this group\'s messages. Don\'t share it or take a photo of it.</string>
+    <string name="group_check">Group check: %1$s</string>
+    <string name="copy_pairing">Copy code</string>
+
+    <string name="more">More</string>
+    <string name="send_test">Send a test message</string>
+    <string name="test_message_body">Test message from Saral SMS Sync. Your phones are connected.</string>
+    <string name="rename_phone">Name this phone</string>
+    <string name="rename_label">Phone name</string>
+    <string name="clear_messages">Delete messages here</string>
+    <string name="clear_body">This deletes the messages shown on this phone. Your other phones keep theirs, and the original SMS aren\'t touched.</string>
+    <string name="leave_group">Leave group</string>
+    <string name="leave_body">This phone stops sending and showing messages, and its copies are deleted. To remove a lost phone from the group, leave on every phone and start a new group.</string>
+    <string name="leave">Leave</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+
+    <string name="channel_ongoing">Sync running</string>
+    <string name="channel_messages">Messages from your phones</string>
+    <string name="ongoing_forwarding">Sending this phone\'s SMS to your other phones</string>
+    <string name="ongoing_reading">Showing SMS from your other phones</string>
+    <string name="ongoing_both">Sending this phone\'s SMS and showing SMS from your other phones</string>
+</resources>
